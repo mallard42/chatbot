@@ -1,11 +1,11 @@
 const TOKEN = 'EAANgh8wiQlgBAEVB91QolzHRNNaeiKp7UTVII7AGxob6CjfoqOLvFVc8rWppaVDEQtbwsOG06s50ZCkvRQ1tfkhucRdjHwePwDMD7emIKEFUPvYJswIKVNDC5QcuDog3OJOddBaDJJY5b8LhDWQu8Na8XdaR6bZC2pyxVTXgZDZD'
-var express = require('express');
-var bodyParser = require('body-parser');
-var app = express().use(bodyParser.json());
-var request = require('request');
+const express = require('express');
+const bodyParser = require('body-parser');
+const app = express().use(bodyParser.json());
+const request = require('request');
 function reverse(str){
     var n = '';
-    for(var i = str.length-1; i >= 0; i--)
+    for(var i = str.length - 1; i >= 0; i--)
         n += str.charAt(i);
     return (n);
 }
@@ -53,11 +53,9 @@ function callSendAPI(sender_psid, response) {
     method: "POST",
     json: request_body
   }, (err, res, body) => {
-    if (!err) {
-      console.log('message sent!')
-    } else {
-      console.error("Unable to send message:" + err);
-    }
+      if (err){
+          console.error("Unable to send message:" + err);
+      }
   });
 }
 
