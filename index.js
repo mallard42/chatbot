@@ -1,8 +1,8 @@
+const TOKEN = 'EAANgh8wiQlgBAEVB91QolzHRNNaeiKp7UTVII7AGxob6CjfoqOLvFVc8rWppaVDEQtbwsOG06s50ZCkvRQ1tfkhucRdjHwePwDMD7emIKEFUPvYJswIKVNDC5QcuDog3OJOddBaDJJY5b8LhDWQu8Na8XdaR6bZC2pyxVTXgZDZD'
 var express = require('express');
 var bodyParser = require('body-parser');
 var app = express().use(bodyParser.json());
 var request = require('request');
-const TOKEN = 'EAADJbdP7rTwBAP6qVQxc7ARfBBRecLZBmIRWP46tH03hWmKtDjdT1ZCLoG9PGWsU6Q2lmEySwH3MfC5ulTvWf5SlQtdfgiUuoO3bSBDZCOkUHbg3uPh3ire6t4qDoW93gdonwdqknQOfTrtCThMJD8JsWAiBBfDNImxR9kB5kdv6sV7dxrZB'
 function reverse(str){
     var n = '';
     for(var i = str.length-1; i >= 0; i--)
@@ -18,17 +18,12 @@ app.post('/webhook', (req, res) => {
     body.entry.forEach(function(entry) {
       let webhook_event = entry.messaging[0];
       let sender_psid = webhook_event.sender.id;
-      console.log("psid : " + sender_psid);
       let message = webhook_event.message.text;
-      // console.log('message = ' + message);
       let revmessage = reverse(message);
-      // console.log('revmessage = ' + revmessage);
       if (revmessage === message){
           handleMessage(sender_psid, "oui");
-          console.log('oui');
       } else {
           handleMessage(sender_psid, "non");
-          console.log('non');
       }
     });
     res.status(200).send('EVENT_RECEIVED');
@@ -41,10 +36,7 @@ function handleMessage(sender_psid, received_message) {
 
   let response;
   if (received_message) {
-      console.log("maman")
-    response = {
-      text: received_message
-    }
+    response = { text: received_message }
   }
   callSendAPI(sender_psid, response);
 }
@@ -68,5 +60,20 @@ function callSendAPI(sender_psid, response) {
     }
   });
 }
+
+app.get('/webhook', (req, res) => {
+  let VERIFY_TOKEN = "verify_token"
+  let mode = req.query['hub.mode'];
+  let token = req.query['hub.verify_token'];
+  let challenge = req.query['hub.challenge'];
+
+  if (mode && token) {
+    if (mode === 'subscribe' && token === VERIFY_TOKEN) {
+      res.status(200).send(challenge);
+    } else {
+      res.sendStatus(403);
+    }
+}
+})
 
 app.listen(8080);
